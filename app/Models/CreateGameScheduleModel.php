@@ -28,7 +28,7 @@ class CreateGameScheduleModel extends Model
             $data_provider =  DB::table($this->table)
                 ->select('betting_providers_id')
                 ->selectRaw('MIN(CASE WHEN slot_time >= ? THEN slot_time ELSE NULL END) as next_slot_time', [now()])
-                ->whereDate('updated_at', today())
+                ->whereDate('created_at', today())
                  ->groupBy('betting_providers_id')
                  ->orderBy('next_slot_time')
                 ->get();

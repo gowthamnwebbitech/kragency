@@ -51,6 +51,7 @@
 
                     <!-- DESKTOP & LAPTOP : OWL CAROUSEL -->
                     <div class="draw-slider owl-carousel d-none d-lg-block">
+                        
                         @foreach ($schedules as $index => $provider)
                             @if ($provider->is_default == 0)
                                 <div class="item">

@@ -14,19 +14,20 @@ use App\Models\CustomerOrderItemModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 
 class CustomerController extends Controller
 {
-    //
+
     public function index(Request $request): View
     {
-      
+
         $gameModel = new CreateGameScheduleModel();
         $data['schedules'] = $gameModel->getGameSchedule();
         $data['sliders'] = \App\Models\Admin\SliderModel::where('status', true)->orderBy('order')->get();
         $data['default_provider'] = $data['schedules']->firstWhere('is_default', 1);
-// dd($data['schedules']);
+
         $currentTime = Carbon::now();
         return view('frontend.dashboard', $data);
     }
@@ -34,37 +35,45 @@ class CustomerController extends Controller
     public function playGame($id, $time_id = null): View
     {
         $currentTime = Carbon::now();
-        //get the model and pass
+
         $gameModel = new CreateGameScheduleModel();
         $data['schedules'] = $gameModel->prepareGameData($id);
         $data['slot_time_id'] = $time_id;
-        $data['close_time'] = CloseTime::pluck('minutes')->first();
+
         $closeMinutes = CloseTime::pluck('minutes')->first();
-        $data['gameSlots'] = CreateGameScheduleModel::with('digitMaster', 'providerSlot')
-                            ->where('betting_providers_id', $id)
-                            ->whereDate('created_at', today())
-                            ->when(!is_null($time_id), function($query) use ($time_id) {
-                                $query->where('slot_time_id', $time_id);
-                            })
-                            ->get()
-                            ->map(function($item) {
-                                $item->digit_type = $item->digitMaster->type;
-                                return $item;
-                            })
-                            ->groupBy(function($item) {
-                                    return $item->digitMaster->type;
-                            });
+        $data['close_time'] = $closeMinutes;
+        $slots = CreateGameScheduleModel::with('digitMaster', 'providerSlot')
+            ->where('betting_providers_id', $id)
+            ->whereDate('created_at', today())
+            ->when(!is_null($time_id), function ($query) use ($time_id) {
+                $query->where('slot_time_id', $time_id);
+            })
+            ->get();
+        $data['gameSlots'] = $slots->groupBy(function ($item) {
+            $digitType = $item->digitMaster?->type ?? 'unknown';
+            $winningAmount = $item->providerSlot?->winning_amount ?? 0;
+            $amount = $item->amount ?? 0;
+
+            return implode('_', [
+                $digitType,
+                $amount,
+                $winningAmount
+            ]);
+        });
+
+
         $show_slot = 0;
-        foreach($data['schedules'] as $schedule) {
-            if($schedule->betting_providers_id == $id && $time_id == $schedule->id) {
-                
-                // Assume $schedule has a 'time' or 'start_time' property (adjust as needed)
-                $scheduleTime = isset($schedule->time) ? $schedule->time : (isset($schedule->start_time) ? $schedule->start_time : null);
+
+        foreach ($data['schedules'] as $schedule) {
+            if ($schedule->betting_providers_id == $id && $time_id == $schedule->id) {
+
+                $scheduleTime = $schedule->time ?? $schedule->start_time ?? null;
+
                 if ($scheduleTime) {
                     $scheduleDateTime = Carbon::parse($scheduleTime);
-                    $closeDateTime = $scheduleDateTime->subMinutes($closeMinutes);
-                    $now = Carbon::now();
-                    if ($now->lessThan($closeDateTime)) {
+                    $closeDateTime = $scheduleDateTime->copy()->subMinutes($closeMinutes);
+
+                    if (now()->lessThan($closeDateTime)) {
                         $show_slot = 1;
                     }
                 }
@@ -72,8 +81,10 @@ class CustomerController extends Controller
         }
 
         $data['show_slot'] = $show_slot;
+
         return view('frontend.play_now', $data);
     }
+
 
     public function placeOrder(Request $request)
     {
@@ -166,7 +177,7 @@ class CustomerController extends Controller
         try {
             $userId = Auth::id();
 
-            $user = User::with(['walletTransactions' => function($query) {
+            $user = User::with(['walletTransactions' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             }])->findOrFail($userId);
 
@@ -181,12 +192,12 @@ class CustomerController extends Controller
                 'user' => $user,
                 'transactions' => $transactions
             ]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } 
+        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->back()->with('error', 'User not found');
-
-        } catch (\Exception $e) {
-            \Log::error('Payment history error: ' . $e->getMessage());
+        } 
+        catch (\Exception $e) {
+            Log::error('Payment history error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to retrieve payment history');
         }
     }
@@ -221,14 +232,14 @@ class CustomerController extends Controller
 
     public function getCart()
     {
-    $userId = Auth::id();
+        $userId = Auth::id();
         $cart = Session::get("lotteryCart.$userId", []);
         return response()->json(['cart' => $cart]);
     }
 
     public function addToCart(Request $request)
     {
-    $userId = Auth::id();
+        $userId = Auth::id();
         $item = $request->item;
 
         $cart = Session::get("lotteryCart.$userId", []);
@@ -241,7 +252,7 @@ class CustomerController extends Controller
 
     public function removeFromCart($index)
     {
-    $userId = Auth::id();
+        $userId = Auth::id();
         $cart = Session::get("lotteryCart.$userId", []);
 
         if (isset($cart[$index])) {
@@ -288,23 +299,22 @@ class CustomerController extends Controller
     {
         //get customer orders and pass to view
         $data['results'] = DB::table('customer_orders')
-                ->leftJoin('customer_order_items', 'customer_orders.id', '=', 'customer_order_items.order_id')
-                ->leftJoin('schedule_providers_slot_time', 'schedule_providers_slot_time.id', '=', 'customer_order_items.game_id')
-                ->leftJoin('digit_master', 'digit_master.id', '=', 'schedule_providers_slot_time.digit_master_id')
-                ->leftJoin('betting_providers', 'betting_providers.id', '=', 'schedule_providers_slot_time.betting_providers_id')
-                ->select(
-                    'customer_orders.*',
-                    'customer_order_items.*',
-                    'customer_order_items.amount as particular_slot_amount',
-                    'schedule_providers_slot_time.*',
-                    'betting_providers.name as provider_name',
-                    'digit_master.name as game_digits'
-                )
-                ->where('customer_orders.user_id', Auth::id())
-                ->orderBy('customer_orders.created_at', 'desc')
-                ->get();
+            ->leftJoin('customer_order_items', 'customer_orders.id', '=', 'customer_order_items.order_id')
+            ->leftJoin('schedule_providers_slot_time', 'schedule_providers_slot_time.id', '=', 'customer_order_items.game_id')
+            ->leftJoin('digit_master', 'digit_master.id', '=', 'schedule_providers_slot_time.digit_master_id')
+            ->leftJoin('betting_providers', 'betting_providers.id', '=', 'schedule_providers_slot_time.betting_providers_id')
+            ->select(
+                'customer_orders.*',
+                'customer_order_items.*',
+                'customer_order_items.amount as particular_slot_amount',
+                'schedule_providers_slot_time.*',
+                'betting_providers.name as provider_name',
+                'digit_master.name as game_digits'
+            )
+            ->where('customer_orders.user_id', Auth::id())
+            ->orderBy('customer_orders.created_at', 'desc')
+            ->get();
 
         return view('frontend.customer-order-details', $data);
     }
-
 }
