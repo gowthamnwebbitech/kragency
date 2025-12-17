@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,7 @@
     @stack('styles')
     <title>@yield('title', 'Kragncy')</title>
 </head>
+
 <body>
 
     {{-- Preloader --}}
@@ -29,8 +31,13 @@
     <div class="overlay"></div>
     <a href="#" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
 
+
+
+
+
     {{-- Header --}}
     @include('frontend.partials.header')
+
 
     {{-- Page content --}}
     <main>
@@ -54,7 +61,7 @@
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     <!-- SweetAlert2 CDN -->
     <script src="{{ asset('frontend/js/sweetalert.js') }}"></script>
-     <script>
+    <script>
         // JavaScript for cart functionality (example)
         $(document).ready(function() {
             $('.header-icon[data-target="#profileModal"]').on('click', function(e) {
@@ -66,9 +73,9 @@
 
     <script>
         $(document).ready(function() {
-             // Load cart from Laravel session on page load
+            // Load cart from Laravel session on page load
             $.ajax({
-                url: '{{ route("lottery.get-cart") }}',
+                url: '{{ route('lottery.get-cart') }}',
                 method: 'GET',
                 success: function(response) {
                     if (response.cart) {
@@ -83,4 +90,5 @@
     @stack('scripts')
 
 </body>
+
 </html>

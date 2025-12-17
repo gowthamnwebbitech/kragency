@@ -77,7 +77,8 @@
 
                                         <div class="d-flex">
                                             @foreach (str_split($gameName) as $char)
-                                                <div class="label" style="margin:0 0 0 2px;padding:0;">{{ $char }}</div>
+                                                <div class="label" style="margin:0 0 0 2px;padding:0;">{{ $char }}
+                                                </div>
                                             @endforeach
                                         </div>
 
@@ -85,10 +86,12 @@
                                             <div class="d-flex">
                                                 @for ($i = 1; $i <= $type; $i++)
                                                     <input type="text" class="input-box" maxlength="1"
-                                                        name="digit{{ $i }}">
+                                                        name="digit{{ $i }}" inputmode="numeric"
+                                                        pattern="[0-9]*" autocomplete="one-time-code">
                                                 @endfor
                                             </div>
                                         </div>
+
 
                                         {{-- COUNTER --}}
                                         <div class="gridChild">
@@ -112,7 +115,7 @@
                 </div>
 
                 @if ($show_slot == 1)
-                    <div class="col-lg-12 text-center">
+                    <div class="col-lg-12 text-center d-none ">
                         <a href="{{ route('lottery.view.cart') }}" class="custom-button2" id="pay-now1">Pay Now</a>
                     </div>
                 @endif
