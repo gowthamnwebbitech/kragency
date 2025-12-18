@@ -156,274 +156,182 @@
 
 
 @push('scripts')
-    <script>
-        $(document).ready(function() {
-            let cart = [];
+    @push('scripts')
+<script>
+$(document).ready(function () {
 
-            // Load cart from Laravel session on page load
-            $.ajax({
-                url: '{{ route('lottery.get-cart') }}',
-                method: 'GET',
-                success: function(response) {
-                    if (response.cart) {
-                        cart = response.cart;
-                        $('#cartCount').text(cart.length);
-                    }
-                }
-            });
+    let cart = [];
 
-            // Counter functionality
-            $('.plus').click(function() {
-                let countElement = $(this).siblings('.count');
-                let count = parseInt(countElement.text());
-                countElement.text(count + 1);
-            });
-
-            $('.minus').click(function() {
-                let countElement = $(this).siblings('.count');
-                let count = parseInt(countElement.text());
-                if (count > 1) {
-                    countElement.text(count - 1);
-                }
-            });
-
-            // Box toggle functionality
-            $('.box-toggle').click(function() {
-                $(this).toggleClass('active');
-            });
-
-            // Add to cart functionality
-            $('.add-to-cart').click(function() {
-
-                let gameWrapper = $(this).closest('.gridWrap');
-                let type = gameWrapper.data('type');
-                let gameLabel = gameWrapper.data('game-label');
-                let gameId = gameWrapper.data('game-id');
-                let amount = Number(gameWrapper.data('amount'));
-                let quantity = Number(gameWrapper.find('.count').text());
-                let isBox = gameWrapper.find('.box-toggle').hasClass('active');
-
-                // Validate and get digits based on type
-                let digits = '';
-                let isValid = true;
-
-                if (type == 1) {
-                    let digit = gameWrapper.find('input[name="digit"]').val().trim();
-                    if (digit === '' || isNaN(digit)) {
-                        alert('Please enter a valid digit');
-                        isValid = false;
-                    } else {
-                        digits = digit;
-                    }
-                } else if (type == 2) {
-                    let digit1 = gameWrapper.find('input[name="digit1"]').val().trim();
-                    let digit2 = gameWrapper.find('input[name="digit2"]').val().trim();
-
-                    if (digit1 === '' || isNaN(digit1) || digit2 === '' || isNaN(digit2)) {
-                        alert('Please enter valid digits');
-                        isValid = false;
-                    } else {
-                        digits = digit1 + digit2;
-                    }
-                } else if (type == 3) {
-                    let digit1 = gameWrapper.find('input[name="digit1"]').val().trim();
-                    let digit2 = gameWrapper.find('input[name="digit2"]').val().trim();
-                    let digit3 = gameWrapper.find('input[name="digit3"]').val().trim();
-
-                    if (digit1 === '' || isNaN(digit1) || digit2 === '' || isNaN(digit2) || digit3 === '' ||
-                        isNaN(digit3)) {
-                        alert('Please enter valid digits');
-                        isValid = false;
-                    } else {
-                        digits = digit1 + digit2 + digit3;
-                    }
-                } else if (type == 4) {
-                    let digit1 = gameWrapper.find('input[name="digit1"]').val().trim();
-                    let digit2 = gameWrapper.find('input[name="digit2"]').val().trim();
-                    let digit3 = gameWrapper.find('input[name="digit3"]').val().trim();
-                    let digit4 = gameWrapper.find('input[name="digit4"]').val().trim();
-
-                    if (digit1 === '' || isNaN(digit1) || digit2 === '' || isNaN(digit2) ||
-                        digit3 === '' || isNaN(digit3) || digit4 === '' || isNaN(digit4)) {
-                        alert('Please enter valid digits');
-                        isValid = false;
-                    } else {
-                        digits = digit1 + digit2 + digit3 + digit4;
-                    }
-                }
-
-                if (!isValid) return;
-
-                // Prepare the new cart item
-                let cartItem = {
-                    type: type,
-                    game_id: gameId,
-                    game_label: gameLabel,
-                    digits: digits,
-                    quantity: quantity,
-                    amount: amount,
-                    is_box: isBox,
-                    total: Number(amount) * Number(quantity)
-                };
-
-                // Calculate the new total if this item is added
-                let newTotal = cart.reduce(function(sum, item) {
-                    return Number(sum) + Number(item.total || 0);
-                }, 0) + Number(cartItem.total);
-
-
-                // Check if user is logged in before wallet check
-                var isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
-                if (!isLoggedIn) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Please login to continue!',
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = "{{ route('login') }}";
-                        }
-                    });
-
-
-                    return;
-                }
-
-                // AJAX wallet check before adding to cart
-                $.ajax({
-                    url: '{{ route('lottery.cart.check-wallet') }}',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        total: newTotal
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Proceed to add to cart
-                            $.ajax({
-                                url: '{{ route('lottery.add-to-cart') }}',
-                                method: 'POST',
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                    item: cartItem
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        cart = response
-                                            .cart; // updated cart from server
-                                        $('#cartCount').text(cart.length);
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Added to cart!',
-                                            text: 'Your selection has been added to the cart.',
-                                            timer: 1500,
-                                            showConfirmButton: false
-                                        });
-                                        gameWrapper.find('input').val('');
-                                        gameWrapper.find('.count').text('1');
-                                        if (isBox) gameWrapper.find('.box-toggle')
-                                            .removeClass('active');
-                                    } else {
-                                        alert('Failed to add cart.');
-                                    }
-                                }
-                            });
-                        } else {
-                            // Remove the attempted item from cart if it was pushed (defensive, but in this code, not pushed yet)
-                            // Just ensure it is not added
-                            alert(response.message ||
-                                'Insufficient wallet balance. Item not added to cart.');
-                            // Defensive: if you ever push before check, remove last
-                            if (cart.length > 0) {
-                                let last = cart[cart.length - 1];
-                                if (last && last.game_id === cartItem.game_id && last.digits ===
-                                    cartItem.digits && last.amount === cartItem.amount && last
-                                    .quantity === cartItem.quantity) {
-                                    cart.pop();
-                                    $('#cartCount').text(cart.length);
-                                }
-                            }
-                        }
-                    },
-                    error: function() {
-                        alert('Error checking wallet balance.');
-                    }
-                });
-
-                // Clear inputs
-                gameWrapper.find('input').val('');
-                gameWrapper.find('.count').text('1');
-                if (isBox) {
-                    gameWrapper.find('.box-toggle').removeClass('active');
-                }
-
-                //count cart items and update cart count
+    /* =========================
+       LOAD CART FROM SESSION
+    ==========================*/
+    $.ajax({
+        url: '{{ route('lottery.get-cart') }}',
+        method: 'GET',
+        success: function (response) {
+            if (response.cart) {
+                cart = response.cart;
                 $('#cartCount').text(cart.length);
-            });
+            }
+        }
+    });
 
-            // Pay now functionality
-            $('#pay-now').click(function() {
-                if (cart.length === 0) {
-                    alert('Your cart is empty. Please add some selections first.');
+    /* =========================
+       COUNTER (+ / -)
+    ==========================*/
+    $(document).on('click', '.plus', function () {
+        let countEl = $(this).siblings('.count');
+        countEl.text(parseInt(countEl.text()) + 1);
+    });
+
+    $(document).on('click', '.minus', function () {
+        let countEl = $(this).siblings('.count');
+        let count = parseInt(countEl.text());
+        if (count > 1) countEl.text(count - 1);
+    });
+
+    /* =========================
+       ADD TO CART
+    ==========================*/
+    $(document).on('click', '.add-to-cart', function () {
+        alert(6)
+        let gameWrapper = $(this).closest('.gridWrap');
+
+        let type      = Number(gameWrapper.data('type'));
+        let gameLabel = gameWrapper.data('game-label');
+        let gameId    = gameWrapper.data('game-id');
+        let amount    = Number(gameWrapper.data('amount'));
+        let quantity  = Number(gameWrapper.find('.count').text());
+        let isBox     = gameWrapper.find('.box-toggle').hasClass('active');
+
+        /* =========================
+           DIGIT VALIDATION (ALL TYPES)
+        ==========================*/
+        let digits = '';
+        let isValid = true;
+
+        gameWrapper.find('.input-box').each(function () {
+            let val = $(this).val().trim();
+            if (val === '' || isNaN(val)) {
+                isValid = false;
+            }
+            digits += val;
+        });
+
+        if (!isValid || digits.length !== type) {
+            alert('Please enter valid digits');
+            return;
+        }
+
+        /* =========================
+           LOGIN CHECK
+        ==========================*/
+        let isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+        if (!isLoggedIn) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Please login to continue!',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = "{{ route('login') }}";
+            });
+            return;
+        }
+
+        /* =========================
+           PREPARE CART ITEM
+        ==========================*/
+        let cartItem = {
+            type: type,
+            game_id: gameId,
+            game_label: gameLabel,
+            digits: digits,
+            quantity: quantity,
+            amount: amount,
+            is_box: isBox,
+            total: amount * quantity
+        };
+
+        let newTotal = cart.reduce((sum, item) => sum + Number(item.total), 0) + cartItem.total;
+
+        /* =========================
+           WALLET CHECK
+        ==========================*/
+        $.ajax({
+            url: '{{ route('lottery.cart.check-wallet') }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                total: newTotal
+            },
+            success: function (response) {
+
+                if (!response.success) {
+                    alert(response.message || 'Insufficient wallet balance');
                     return;
                 }
 
-                // Display cart items in modal
-                let cartHtml = '';
-                let total = 0;
-
-                cart.forEach(function(item, index) {
-                    cartHtml += `
-                    <div class="cart-item">
-                        <p>Label: ${item.game_label} - Digit: ${item.digits} - Quantity: ${item.quantity} - ₹${item.total}</p>
-                    </div>
-                `;
-                    total += item.total;
-                });
-
-                $('#cart-items').html(cartHtml);
-                $('#cart-total').text(total);
-
-                // Show modal
-                $('#cartModal').modal('show');
-            });
-
-            // Confirm payment
-            /* $('#confirm-payment').click(function() {
+                /* =========================
+                   ADD TO CART (SERVER)
+                ==========================*/
                 $.ajax({
-                    url: '{{ route('lottery.place-order') }}',
+                    url: '{{ route('lottery.add-to-cart') }}',
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
-                        cart: cart
+                        item: cartItem
                     },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Order placed successfully!');
-                            // Clear cart
-                            cart = [];
-                            sessionStorage.removeItem('lotteryCart');
-                            $('#cartModal').modal('hide');
-                            // Redirect or refresh as needed
-                            window.location.reload();
+                    success: function (res) {
+                        if (res.success) {
+                            cart = res.cart;
+                            $('#cartCount').text(cart.length);
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Added to cart!',
+                                timer: 1200,
+                                showConfirmButton: false
+                            });
+
+                            // Reset fields
+                            gameWrapper.find('.input-box').val('');
+                            gameWrapper.find('.count').text('1');
+                            gameWrapper.find('.box-toggle').removeClass('active');
+
                         } else {
-                            alert('Error: ' + response.message);
+                            alert('Failed to add item');
                         }
-                    },
-                    error: function(xhr) {
-                        alert('An error occurred. Please try again.');
                     }
                 });
-            });*/
-
-            // Load cart from session storage on page load
-            let savedCart = sessionStorage.getItem('lotteryCart');
-            if (savedCart) {
-                cart = JSON.parse(savedCart);
+            },
+            error: function () {
+                alert('Wallet check failed');
             }
         });
-    </script>
+    });
+
+});
+</script>
+
+<script>
+/* =========================
+   AUTO FOCUS NEXT INPUT
+=========================*/
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.gridWrap .input-box').forEach((input, index, arr) => {
+        input.addEventListener('input', function () {
+            if (this.value.length === 1) {
+                let next = arr[index + 1];
+                if (next && next.closest('.gridWrap') === this.closest('.gridWrap')) {
+                    next.focus();
+                }
+            }
+        });
+    });
+});
+</script>
+@endpush
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Auto-focus next input for double, triple, and four digit games

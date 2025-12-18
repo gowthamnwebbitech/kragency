@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\CreateGameScheduleModel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -19,11 +21,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+       
         return view('auth.login');
     }
 
     public function createCustomer(): View
     {
+        Session::forget('lotteryCart');
         $link = \App\Models\WhatsAppLink::first()->link ?? null;
         return view('frontend.login', compact('link'));
     }
