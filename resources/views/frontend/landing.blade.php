@@ -54,45 +54,50 @@
                         @foreach ($schedules as $index => $provider)
                             @if ($provider->is_default == 0)
                                 <div class="bet-draw-slide">
-                                    <div class="bet-draw-card">
-                                        <img class="bet-draw-card__overlay"
-                                            src="{{ asset('frontend/images/overlaymask1.png') }}" alt="">
+                                    <a href="{{ !empty($provider->next_slot_time)
+                                        ? route('customer.play-now', ['id' => $provider->betting_providers_id, 'time_id' => $provider->next_slot_id])
+                                        : 'javascript:void(0)' }}"
+                                        class="bet-draw-card-link">
+                                        <div class="bet-draw-card">
+                                            <img class="bet-draw-card__overlay"
+                                                src="{{ asset('frontend/images/overlaymask1.png') }}" alt="">
 
-                                        <div class="bet-draw-card__icon">
-                                            <img src="{{ asset('../storage/app/public/' . $provider->imagepath) }}"
-                                                alt="">
+                                            <div class="bet-draw-card__icon">
+                                                <img src="{{ asset('../storage/app/public/' . $provider->imagepath) }}"
+                                                    alt="">
+                                            </div>
+
+                                            <h4 class="bet-draw-card__title">{{ $provider->name }}</h4>
+
+                                            @if (!empty($provider->next_slot_time))
+                                                <a href="{{ route('customer.play-now', ['id' => $provider->betting_providers_id, 'time_id' => $provider->next_slot_id]) }}"
+                                                    class="bet-draw-card__btn">
+                                                    Play Now
+                                                </a>
+
+                                                <div class="bet-draw-card__next">
+                                                    <span>Next Draw</span>
+                                                    <div class="bet-draw-card__time">
+                                                        <img src="{{ asset('frontend/images/time.png') }}" alt="">
+                                                        <h6 id="countdown-{{ $index }}"
+                                                            data-end-time="{{ $provider->next_slot_time }}">
+                                                            {{ $provider->next_slot_time }}
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <a class="bet-draw-card__btn hidden">Play Now</a>
+
+                                                <div class="bet-draw-card__next">
+                                                    <span>Next Draw</span>
+                                                    <div class="bet-draw-card__time">
+                                                        <img src="{{ asset('frontend/images/time.png') }}" alt="">
+                                                        <h6>Tomorrow</h6>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
-
-                                        <h4 class="bet-draw-card__title">{{ $provider->name }}</h4>
-
-                                        @if (!empty($provider->next_slot_time))
-                                            <a href="{{ route('customer.play-now', ['id' => $provider->betting_providers_id, 'time_id' => $provider->next_slot_id]) }}"
-                                                class="bet-draw-card__btn">
-                                                Play Now
-                                            </a>
-
-                                            <div class="bet-draw-card__next">
-                                                <span>Next Draw</span>
-                                                <div class="bet-draw-card__time">
-                                                    <img src="{{ asset('frontend/images/time.png') }}" alt="">
-                                                    <h6 id="countdown-{{ $index }}"
-                                                        data-end-time="{{ $provider->next_slot_time }}">
-                                                        {{ $provider->next_slot_time }}
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <a class="bet-draw-card__btn hidden">Play Now</a>
-
-                                            <div class="bet-draw-card__next">
-                                                <span>Next Draw</span>
-                                                <div class="bet-draw-card__time">
-                                                    <img src="{{ asset('frontend/images/time.png') }}" alt="">
-                                                    <h6>Tomorrow</h6>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
+                                    </a>
                                 </div>
                             @endif
                         @endforeach
@@ -102,51 +107,56 @@
 
                     <!-- MOBILE & TABLET : GRID VIEW -->
                     <div class="draw-mobile-grid d-lg-none">
-                        <div class="draw-grid">
-                            @foreach ($schedules as $index => $provider)
-                                @if ($provider->is_default == 0)
-                                    <div class="draw-card">
-                                        <img class="overlay" src="{{ asset('frontend/images/overlaymask1.png') }}"
-                                            alt="">
-
-                                        <div class="draw-card__icon">
-                                            <img src="{{ asset('../storage/app/public/' . $provider->imagepath) }}"
+                        <a href="{{ !empty($provider->next_slot_time)
+                            ? route('customer.play-now', ['id' => $provider->betting_providers_id, 'time_id' => $provider->next_slot_id])
+                            : 'javascript:void(0)' }}"
+                            class="draw-card-link">
+                            <div class="draw-grid">
+                                @foreach ($schedules as $index => $provider)
+                                    @if ($provider->is_default == 0)
+                                        <div class="draw-card">
+                                            <img class="overlay" src="{{ asset('frontend/images/overlaymask1.png') }}"
                                                 alt="">
+
+                                            <div class="draw-card__icon">
+                                                <img src="{{ asset('../storage/app/public/' . $provider->imagepath) }}"
+                                                    alt="">
+                                            </div>
+
+                                            <h4 class="draw-card__title">{{ $provider->name }}</h4>
+
+                                            @if (!empty($provider->next_slot_time))
+                                                <a href="{{ route('customer.play-now', ['id' => $provider->betting_providers_id, 'time_id' => $provider->next_slot_id]) }}"
+                                                    class="draw-card__btn">
+                                                    Play Now
+                                                </a>
+
+                                                <div class="draw-card__next">
+                                                    <span>Next Draw</span>
+                                                    <div class="draw-card__time">
+                                                        <img src="{{ asset('frontend/images/time.png') }}" alt="">
+                                                        <h6 id="countdown-{{ $index }}"
+                                                            data-end-time="{{ $provider->next_slot_time }}">
+                                                            {{ $provider->next_slot_time }}
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <a class="draw-card__btn hidden">Play Now</a>
+
+                                                <div class="draw-card__next">
+                                                    <span>Next Draw</span>
+                                                    <div class="draw-card__time">
+                                                        <img src="{{ asset('frontend/images/time.png') }}" alt="">
+                                                        <h6>Tomorrow</h6>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
-
-                                        <h4 class="draw-card__title">{{ $provider->name }}</h4>
-
-                                        @if (!empty($provider->next_slot_time))
-                                            <a href="{{ route('customer.play-now', ['id' => $provider->betting_providers_id, 'time_id' => $provider->next_slot_id]) }}"
-                                                class="draw-card__btn">
-                                                Play Now
-                                            </a>
-
-                                            <div class="draw-card__next">
-                                                <span>Next Draw</span>
-                                                <div class="draw-card__time">
-                                                    <img src="{{ asset('frontend/images/time.png') }}" alt="">
-                                                    <h6 id="countdown-{{ $index }}"
-                                                        data-end-time="{{ $provider->next_slot_time }}">
-                                                        {{ $provider->next_slot_time }}
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <a class="draw-card__btn hidden">Play Now</a>
-
-                                            <div class="draw-card__next">
-                                                <span>Next Draw</span>
-                                                <div class="draw-card__time">
-                                                    <img src="{{ asset('frontend/images/time.png') }}" alt="">
-                                                    <h6>Tomorrow</h6>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endif
-                            @endforeach
-                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </a>
                     </div>
 
                 </div>

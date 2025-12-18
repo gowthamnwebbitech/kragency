@@ -11,7 +11,6 @@
                             @foreach ($schedules as $schedule)
                                 @php
                                     $scheduleTime = \Carbon\Carbon::parse($schedule->time);
-                                    dd($schedule)
                                     $compareTime = now()->addMinutes($close_time);
                                 @endphp
 
