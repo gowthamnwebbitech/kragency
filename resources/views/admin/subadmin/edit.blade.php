@@ -2,8 +2,11 @@
 
 @section('content')
     <div class="container-fluid">
-        <h3>Edit Sub Admin</h3>
 
+        <div class="d-flex justify-content-between mt-3">
+            <h3>Edit Sub Admin</h3>
+            <a href="{{ route('admin.subadmin.index') }}" class="btn btn-secondary">Back</a>
+        </div>
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul class="mb-0">
@@ -19,7 +22,8 @@
 
             <div class="mb-3">
                 <label>Name</label>
-                <input type="text" name="name" value="{{ old('name', $subadmin->name) }}" class="form-control" required>
+                <input type="text" name="name" value="{{ old('name', $subadmin->name) }}" class="form-control"
+                    required>
             </div>
 
             <div class="mb-3">
@@ -45,7 +49,7 @@
                 <input type="password" name="password" class="form-control" placeholder="Enter new password">
             </div>
 
-            <button class="btn btn-primary">Update</button>
+            <button class="btn btn-primary mb-2">Update</button>
         </form>
     </div>
 @endsection
