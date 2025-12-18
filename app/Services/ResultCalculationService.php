@@ -144,7 +144,7 @@ class ResultCalculationService
                 'user_id' => $userId,
             ]);
 
-            // Update user wallet and log if win
+            
             if ($winAmount > 0 && $userId) {
                 $wallet = WalletModel::where('user_id', $userId)->first();
                 if ($wallet) {

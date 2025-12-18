@@ -2,7 +2,11 @@
 
 @section('content')
     <div class="container-fluid">
-        <h3>Create Sub Admin</h3>
+        
+        <div class="d-flex justify-content-between mt-3">
+            <h3>Create Sub Admin</h3>
+            <a href="{{ route('admin.subadmin.index') }}" class="btn btn-secondary">Back</a>
+        </div>
         <form method="POST" action="{{ route('admin.subadmin.store') }}">
             @csrf
 
