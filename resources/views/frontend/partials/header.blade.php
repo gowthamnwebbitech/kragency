@@ -2,7 +2,7 @@
 
     {{-- ================= MOBILE TOP LOGIN BAR ================= --}}
     @if (!Auth::check())
-        <div class="mobile-auth-bar d-lg-none">
+        <div class="mobile-auth-bar d-lg-none bg-yellows">
             <div class="container d-flex justify-content-end">
                 <a href="{{ route('login') }}">
                     <i class="fas fa-sign-in-alt mr-1"></i> Login / Register
@@ -564,6 +564,8 @@
         color: #28a745;
         font-size: 15px;
     }
+
+    
 
     /* HOVER FEEDBACK */
     .wallet-ui:hover {

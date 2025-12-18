@@ -215,7 +215,6 @@
             }
             .login-section {
                 align-items: flex-start; /* Better view when keyboard opens */
-                padding-top: 60px;
             }
         }
     </style>

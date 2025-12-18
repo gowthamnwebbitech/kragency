@@ -4085,13 +4085,14 @@ input[type="submit"] {
 }
 
 .lottery-card.active {
-    border: 2px solid #5c27fe;
-    color: #5c27fe;
+    border: 2px solid #dc2626;   /* modern red */
+    color: #dc2626;
     background: #fff;
-    min-width: 100px; /* smaller minimum */
-    max-width: 130px; /* slightly reduced */
+    min-width: 100px;
+    max-width: 130px;
     width: 100%;
 }
+
 
 .lottery-card.running {
     background-image: -webkit-gradient(

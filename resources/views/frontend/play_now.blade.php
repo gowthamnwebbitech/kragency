@@ -103,7 +103,7 @@
                                         </div>
 
                                         {{-- ADD --}}
-                                        <div class="gridChild text-right">
+                                        <div class="gridChild text-center text-lg-right">
                                             <a class="custom-button2 add-to-cart">ADD</a>
                                         </div>
                                     </div>
