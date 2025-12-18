@@ -20,7 +20,7 @@ class WithdrawController extends Controller
     {
         $userId = Auth::id();
 
-        // ✅ Get wallet first
+        
         $wallet = WalletModel::where('user_id', $userId)->first();
 
         if (!$wallet) {
@@ -29,7 +29,7 @@ class WithdrawController extends Controller
             ]);
         }
 
-        // ✅ Validation: min ₹500, max wallet balance
+
         $request->validate([
             'amount' => [
                 'required',
@@ -42,7 +42,7 @@ class WithdrawController extends Controller
             'amount.max' => 'Withdrawal amount cannot exceed wallet balance.',
         ]);
 
-        // ✅ One withdrawal per 24 hours
+        
         $lastWithdraw = WithdrawRequest::where('user_id', $userId)
             ->where('created_at', '>=', Carbon::now()->subHours(24))
             ->first();
@@ -53,14 +53,14 @@ class WithdrawController extends Controller
             ]);
         }
 
-        // ✅ Create withdraw request with entered amount
+        
         WithdrawRequest::create([
             'user_id' => $userId,
             'amount'  => $request->amount,
             'status'  => 'pending',
         ]);
 
-        // ✅ Deduct wallet balance
+
         $wallet->decrement('balance', $request->amount);
 
         return redirect()
