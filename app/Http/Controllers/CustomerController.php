@@ -40,7 +40,7 @@ class CustomerController extends Controller
         $data['schedules'] = $gameModel->prepareGameData($id);
         $data['slot_time_id'] = $time_id;
 
-        $closeMinutes = (int) CloseTime::pluck('minutes')->first();
+        $closeMinutes = CloseTime::pluck('minutes')->first();
         $data['close_time'] = $closeMinutes;
         $slots = CreateGameScheduleModel::with('digitMaster', 'providerSlot')
             ->where('betting_providers_id', $id)
@@ -192,9 +192,11 @@ class CustomerController extends Controller
                 'user' => $user,
                 'transactions' => $transactions
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } 
+        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->back()->with('error', 'User not found');
-        } catch (\Exception $e) {
+        } 
+        catch (\Exception $e) {
             Log::error('Payment history error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to retrieve payment history');
         }
@@ -204,7 +206,7 @@ class CustomerController extends Controller
     {
         $userId = Auth::id();
         $cart = Session::get("lotteryCart.$userId", []);
-
+        // dd($cart);
         // Remove expired items based on slot_time and close_time
         $closeMinutes = \App\Models\CloseTime::pluck('minutes')->first();
         $now = now();
@@ -224,7 +226,7 @@ class CustomerController extends Controller
         }
         // Update session with filtered cart
         Session::put("lotteryCart.$userId", $filteredCart);
-
+        // dd();
         return view('frontend.cart', ['cart' => $filteredCart]);
     }
 
