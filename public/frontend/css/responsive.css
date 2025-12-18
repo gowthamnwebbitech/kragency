@@ -301,7 +301,7 @@
     .title,
     .price,
     .random-btn {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .random-btn {
@@ -317,8 +317,8 @@
         line-height: 1.5;
     }
     .input-box {
-        width: 36px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
     }
 
     .lottery-times {
@@ -327,7 +327,7 @@
     /* Tablet */
     @media (max-width: 991px) {
         .gridWrap {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
     }
@@ -335,15 +335,15 @@
     /* Mobile */
     @media (max-width: 575px) {
         .gridWrap {
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
     }
     
     .label {
         font-size: 14px;
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
     }
 
     .input-box {
