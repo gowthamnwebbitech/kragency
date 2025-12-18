@@ -4059,63 +4059,74 @@ input[type="submit"] {
 .box-btn:hover {
     background: #822;
 }
+/* Container for lottery cards using CSS Grid */
 .lottery-times {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px; /* Space between cards */
     margin-bottom: 30px;
 }
 
+/* Base lottery card style */
 .lottery-card {
-      flex: 0 0 auto;  
     text-align: center;
     padding: 15px;
     border-radius: 10px;
     font-weight: bold;
     font-size: 18px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
+/* Closed state */
 .lottery-card.closed {
     background: #ededff;
     color: #333;
-    min-width: 100px; /* smaller minimum */
-    max-width: 130px; /* slightly reduced */
-    width: 100%;
 }
 
+/* Active state - Red */
 .lottery-card.active {
-    border: 2px solid #dc2626;   /* modern red */
-    color: #dc2626;
+    border: 2px solid #e53935; /* Red border */
+    color: #e53935;            /* Red text */
     background: #fff;
-    min-width: 100px;
-    max-width: 130px;
-    width: 100%;
 }
 
-
+/* Running state with gradient */
 .lottery-card.running {
-    background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        from(#c165dd),
-        to(#5c27fe)
-    );
-    min-width: 100px; /* smaller minimum */
-    max-width: 130px; /* slightly reduced */
-    width: 100%;
-    background-image: -o-linear-gradient(bottom, #c165dd 0%, #5c27fe 100%);
-    background-image: linear-gradient(to top, #c165dd 0%, #5c27fe 100%);
+    background: linear-gradient(to top, #c165dd 0%, #5c27fe 100%);
     color: #fff;
 }
 
+/* Small text inside card */
 .lottery-card small {
     display: block;
     margin-top: 5px;
     font-size: 14px;
 }
 
+/* ===================== Responsive Grid Adjustments ===================== */
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) {
+    .lottery-times {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+}
+
+/* Mobile (up to 767px) */
+@media (max-width: 767px) {
+    .lottery-times {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 479px) {
+    .lottery-times {
+            grid-template-columns: repeat(2, 1fr);
+    }
+
+
+}
 .axn-container {
     background: #fff;
     color: #332324;
@@ -4272,7 +4283,6 @@ input[type="submit"] {
     align-items: center;
     margin-bottom: 10px;
 }
-
 
 /* ============================
    MOBILE DRAW GRID
@@ -4437,7 +4447,6 @@ input[type="submit"] {
         display: none;
     }
 }
- 
 
 /* ============================
    BET DRAW SLIDER
@@ -4529,9 +4538,8 @@ input[type="submit"] {
     box-shadow: 0 6px 18px rgba(92, 39, 254, 0.35);
 }
 .bet-draw-card__btn:hover {
-color: #ffffff;
+    color: #ffffff;
 }
-
 
 .bet-draw-card__btn.hidden {
     visibility: hidden;
@@ -4578,7 +4586,11 @@ color: #ffffff;
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #5c27fe, #8f6bff) !important; /* default blue gradient */
+    background: linear-gradient(
+        135deg,
+        #5c27fe,
+        #8f6bff
+    ) !important; /* default blue gradient */
     display: flex;
     align-items: center;
     justify-content: center;

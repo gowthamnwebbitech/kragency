@@ -295,7 +295,7 @@
     .mobile-auth-bar a {
         font-size: 13px;
         font-weight: 600;
-        color: #4e54c8;
+        color: #e53935;
     }
 
     /* ================= MOBILE ICONS (DEFAULT – MOBILE FIRST) ================= */
