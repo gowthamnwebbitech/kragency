@@ -168,7 +168,6 @@ Route::middleware(['auth', 'onlyCustomer'])->group(function () {
     // AJAX endpoint for wallet check before adding to cart
     Route::post('/lottery/cart/check-wallet', [\App\Http\Controllers\CartAjaxController::class, 'checkWallet'])->name('lottery.cart.check-wallet');
     Route::get('customer-dashboard', [CustomerController::class, 'index'])->name('customer.dashboard');
-
     Route::post('lottery/place-order', [CustomerController::class, 'placeOrder'])->name('lottery.place-order');
     Route::get('payment-history', [CustomerController::class, 'paymentHistory'])->name('payment.history');
 

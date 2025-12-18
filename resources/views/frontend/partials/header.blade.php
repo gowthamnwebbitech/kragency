@@ -17,9 +17,11 @@
         <div class="container d-flex align-items-center justify-content-between p-2">
 
             {{-- LOGO --}}
-            <a class="navbar-brand" href="{{ route('customer.dashboard') }}">
-                <img src="{{ asset('frontend/images/logo.png') }}" class="brand-logo">
+            <a class="navbar-brand"
+                href="{{ auth()->check() ? route('customer.dashboard') : route('landing-dashboard') }}">
+                <img src="{{ asset('frontend/images/logo.png') }}" class="brand-logo" alt="Logo">
             </a>
+
 
             {{-- ================= MOBILE RIGHT ICONS ================= --}}
             <div class="mobile-icons d-lg-none">
@@ -188,7 +190,7 @@
                         <i class="fas fa-sign-in-alt"></i> Login / Register
                     </a>
                 </li>
-    
+
             @endguest
 
 
@@ -565,7 +567,7 @@
         font-size: 15px;
     }
 
-    
+
 
     /* HOVER FEEDBACK */
     .wallet-ui:hover {
