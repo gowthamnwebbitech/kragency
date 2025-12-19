@@ -38,7 +38,7 @@
                     <a href="{{ route('lottery.view.cart') }}" class="icon-btn position-relative">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="badge badge-danger cart-badge">
-                            {{ session('lotteryCart') ? count(session('lotteryCart')) : 0 }}
+                              {{ count(session('lotteryCart.' . auth()->id(), [])) }}
                         </span>
                     </a>
 
