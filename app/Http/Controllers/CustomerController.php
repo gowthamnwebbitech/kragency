@@ -40,7 +40,7 @@ class CustomerController extends Controller
         $data['schedules'] = $gameModel->prepareGameData($id);
         $data['slot_time_id'] = $time_id;
 
-        $closeMinutes = CloseTime::pluck('minutes')->first();
+        $closeMinutes = (int) CloseTime::pluck('minutes')->first();
         $data['close_time'] = $closeMinutes;
         $slots = CreateGameScheduleModel::with('digitMaster', 'providerSlot')
             ->where('betting_providers_id', $id)
