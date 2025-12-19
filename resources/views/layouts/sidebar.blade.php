@@ -1,7 +1,3 @@
-@php
-    $userType = auth()->user()->user_type ?? null;
-@endphp
-
 
 @php
     $userType = auth()->user()->user_type ?? null;
