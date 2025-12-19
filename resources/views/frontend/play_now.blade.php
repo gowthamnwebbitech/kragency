@@ -63,7 +63,7 @@
                                         </div>
                                     @endif
 
-                                    <div class="price">₹{{ $first->amount }}</div>
+                                    <div class="price">Price : ₹{{ $first->amount }}</div>
                                 </div>
                                 @foreach ($group as $game_slot)
                                     <div class="gridWrap" data-type="{{ $type }}"
@@ -83,7 +83,8 @@
                                         </div>
 
                                         <div class="gridChild">
-                                            <div class="d-flex">
+                                            <div class="d-flex justifyEnd">
+                                                {{-- INPUT BOXES --}}
                                                 @for ($i = 1; $i <= $type; $i++)
                                                     <input type="text" class="input-box" maxlength="1"
                                                         name="digit{{ $i }}" inputmode="numeric"

@@ -19,34 +19,55 @@
             {{-- LOGO --}}
             <a class="navbar-brand"
                 href="{{ auth()->check() ? route('customer.dashboard') : route('landing-dashboard') }}">
-                <img src="{{ asset('frontend/images/logo.png') }}" class="brand-logo" alt="Logo">
+
+                {{-- Mobile Logo --}}
+                <img src="{{ asset('frontend/images/logoimage.png') }}" class="brand-logo brand-logo-mobile d-lg-none"
+                    alt="Logo">
+
+                {{-- Desktop Logo --}}
+                <img src="{{ asset('frontend/images/logo.png') }}"
+                    class="brand-logo brand-logo-desktop d-none d-lg-block" alt="Logo">
             </a>
 
 
             {{-- ================= MOBILE RIGHT ICONS ================= --}}
-            <div class="mobile-icons d-lg-none">
+            <div class="d-flex justify-content-end align-items-center d-lg-none">
+                <div class="mobile-icons">
 
-                {{-- CART --}}
-                <a href="{{ route('lottery.view.cart') }}" class="icon-btn position-relative">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="badge badge-danger cart-badge">
-                        {{ session('lotteryCart') ? count(session('lotteryCart')) : 0 }}
-                    </span>
-                </a>
-
-                {{-- USER OFFCANVAS TRIGGER --}}
-                @if (Auth::check())
-                    <a href="#" class="icon-btn" data-toggle="offcanvas" data-target="#userOffcanvas">
-                        <i class="fas fa-user"></i>
+                    {{-- CART --}}
+                    <a href="{{ route('lottery.view.cart') }}" class="icon-btn position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge badge-danger cart-badge">
+                            {{ session('lotteryCart') ? count(session('lotteryCart')) : 0 }}
+                        </span>
                     </a>
-                @endif
 
-                {{-- MENU OFFCANVAS TRIGGER --}}
-                <button class="navbar-toggler" type="button" data-toggle="offcanvas" data-target="#navOffcanvas">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                    {{-- RESULTS --}}
+                    <a href="{{ route('customer.results') }}" class="icon-btn text-black">
+                        <i class="fas fa-trophy"></i>
+                    </a>
+
+                    {{-- WALLET --}}
+                    @if (Auth::check())
+                        <div class="mobile-wallet">
+                            <i class="fas fa-wallet"></i>
+                            <span>₹{{ $user_detail?->wallet?->balance ?? 0 }}</span>
+                        </div>
+                    @endif
+
+                    {{-- USER --}}
+                    @if (Auth::check())
+                        <a href="#" class="icon-btn" data-toggle="offcanvas" data-target="#userOffcanvas">
+                            <i class="fas fa-user"></i>
+                        </a>
+                    @endif
+
+                    {{-- MENU --}}
+                    <button class="navbar-toggler" type="button" data-toggle="offcanvas" data-target="#navOffcanvas">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
             </div>
-
 
             {{-- ================= DESKTOP NAV LINKS ================= --}}
             <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
@@ -299,16 +320,54 @@
     }
 
     /* ================= MOBILE ICONS (DEFAULT – MOBILE FIRST) ================= */
+    /* MOBILE ICON GROUP */
     .mobile-icons {
         display: flex;
         align-items: center;
         gap: 14px;
     }
 
+    /* ICON BUTTON */
+    .icon-btn {
+        font-size: 18px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-wallet {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: #f4f6ff;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4e54c8;
+        white-space: nowrap;
+    }
+
+    .mobile-wallet i {
+        font-size: 14px;
+        color: #28a745;
+    }
+
+    /* Optional: slightly smaller text on very small phones */
+    @media (max-width: 360px) {
+        .mobile-wallet {
+            font-size: 12px;
+            padding: 0px 7px;
+        }
+    }
+
+
+
     /* ================= SMALL PHONES (≤ 360px) ================= */
     @media (max-width: 360px) {
         .mobile-icons {
-            gap: 23px;
+            gap: 16px;
         }
     }
 

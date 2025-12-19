@@ -13,6 +13,28 @@
             overflow: hidden;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
+        /* ================= TABLE SCROLL FIX ================= */
+
+/* Desktop – no scroll */
+.table-scroll {
+    width: 100%;
+    overflow-x: visible;
+}
+
+/* Mobile – horizontal scroll */
+@media (max-width: 768px) {
+
+    .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table.dataTable,
+    .receipt-table {
+        min-width: 700px; /* force scroll on mobile */
+    }
+}
+
         
         .receipt-table {
             width: 100%;
@@ -110,7 +132,9 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
+
                             <div class="receipt">
+                                   <div class="table-scroll">
                                 <table id="receiptTable" class="receipt-table">
                                     <thead>
                                         <tr class="receipt-row receipt-header-row">
@@ -124,6 +148,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                                </div>
                         </div>
                     </div>
                 </div>

@@ -25,9 +25,46 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-brand img {
-    border-radius: 5px;
+/* ================= NAVBAR BRAND ================= */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
 }
+
+/* ================= COMMON LOGO ================= */
+.brand-logo {
+    width: auto;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+/* ================= MOBILE LOGO ================= */
+.brand-logo-mobile {
+    height: 34px;          /* BEST mobile size */
+    max-width: 54px;
+}
+
+/* ================= DESKTOP LOGO ================= */
+.brand-logo-desktop {
+    height: 44px;          /* PERFECT desktop size */
+    max-width: 200px;
+}
+
+/* ================= SMALL PHONES ================= */
+@media (max-width: 360px) {
+    .brand-logo-mobile {
+        height: 30px;
+        max-width: 54px;
+    }
+}
+
+/* ================= TOUCH FEEDBACK ================= */
+.brand-logo:active {
+    transform: scale(0.96);
+}
+
 .custom-toggler {
     width: 42px;
     height: 42px;
