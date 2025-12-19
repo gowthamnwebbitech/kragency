@@ -224,9 +224,8 @@ class CustomerController extends Controller
                 }
             }
         }
-        // Update session with filtered cart
+        
         Session::put("lotteryCart.$userId", $filteredCart);
-        // dd();
         return view('frontend.cart', ['cart' => $filteredCart]);
     }
 

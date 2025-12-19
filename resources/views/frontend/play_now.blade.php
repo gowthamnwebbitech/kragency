@@ -193,7 +193,7 @@ $(document).ready(function () {
        ADD TO CART
     ==========================*/
     $(document).on('click', '.add-to-cart', function () {
-        alert(6)
+        
         let gameWrapper = $(this).closest('.gridWrap');
 
         let type      = Number(gameWrapper.data('type'));
