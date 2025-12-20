@@ -8,7 +8,13 @@ class CustomerOrder extends Model
 {
     protected $table = 'customer_orders';
     protected $fillable = [
-        'user_id', 'total_amount', 'opening_balance', 'closing_balance', 'status', 'created_at', 'updated_at'
+        'user_id',
+        'total_amount',
+        'opening_balance',
+        'closing_balance',
+        'status',
+        'created_at',
+        'updated_at'
     ];
     public function user()
     {

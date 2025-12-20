@@ -174,6 +174,7 @@ class CustomerController extends Controller
 
     public function paymentHistory(Request $request)
     {
+        
         try {
             $userId = Auth::id();
 
@@ -192,11 +193,9 @@ class CustomerController extends Controller
                 'user' => $user,
                 'transactions' => $transactions
             ]);
-        } 
-        catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->back()->with('error', 'User not found');
-        } 
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Payment history error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to retrieve payment history');
         }
@@ -224,7 +223,7 @@ class CustomerController extends Controller
                 }
             }
         }
-        
+
         Session::put("lotteryCart.$userId", $filteredCart);
         return view('frontend.cart', ['cart' => $filteredCart]);
     }
@@ -275,24 +274,45 @@ class CustomerController extends Controller
         return view('frontend.results');
     }
 
+    // public function getTableData(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         // Get data from schedule_provider joined with betting_providers and provider_slots
+    //         $results = DB::table('schedule_provider')
+    //             ->leftJoin('betting_providers', 'schedule_provider.betting_providers_id', '=', 'betting_providers.id')
+    //             ->leftJoin('provider_times', 'provider_times.id', '=', 'schedule_provider.slot_time_id')
+    //             ->select(
+    //                 'schedule_provider.*',
+    //                 'betting_providers.name as provider_name',
+    //                 'provider_times.time as slot_time'
+    //             )
+    //             ->whereDate('schedule_provider.created_at', '=', now()->toDateString())
+    //             ->get();
+
+    //         return DataTables::of($results)->make(true);
+    //     }
+    // }
     public function getTableData(Request $request)
     {
         if ($request->ajax()) {
-            // Get data from schedule_provider joined with betting_providers and provider_slots
+
             $results = DB::table('schedule_provider')
                 ->leftJoin('betting_providers', 'schedule_provider.betting_providers_id', '=', 'betting_providers.id')
                 ->leftJoin('provider_times', 'provider_times.id', '=', 'schedule_provider.slot_time_id')
                 ->select(
-                    'schedule_provider.*',
+                    'schedule_provider.id',
                     'betting_providers.name as provider_name',
-                    'provider_times.time as slot_time'
+                    'provider_times.time as slot_time',
+                    'schedule_provider.result',
+                    'schedule_provider.created_at'
                 )
-                ->whereDate('schedule_provider.created_at', '=', now()->toDateString())
-                ->get();
+                ->whereDate('schedule_provider.created_at', now()->toDateString())
+                ->orderBy('schedule_provider.created_at', 'desc'); 
 
             return DataTables::of($results)->make(true);
         }
     }
+
 
     public function customerOrderDetails()
     {
