@@ -116,7 +116,7 @@
                 </div>
 
                 @if ($show_slot == 1)
-                    <div class="col-lg-12 text-center d-none ">
+                    <div class="col-lg-12 text-center">
                         <a href="{{ route('lottery.view.cart') }}" class="custom-button2" id="pay-now1">Pay Now</a>
                     </div>
                 @endif
